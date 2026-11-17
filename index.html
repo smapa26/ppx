@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <head>
@@ -6,10 +6,12 @@
   <meta charset="UTF-8"> 
   <meta name="theme-color" content="#d6e8ff">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Informatika CBT 2026</title>
+  <title>Aplikasi CBT 2026</title>
   
   <!-- 2. Favicon SVG Data-URI yang Sudah Di-encode -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💻%3C/text%3E%3C/svg%3E">
+	<!-- Favicon menggunakan Logo SMAPA -->
+    <link rel="icon" type="image/png" href="https://sman4-pasuruan.sch.id/wp-content/uploads/2024/06/LOGO-SMAPA-1024x1024.png">
+   <!--	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💻%3C/text%3E%3C/svg%3E"> -->
 
   <!-- Font Kaligrafi Dancing Script & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -314,6 +316,19 @@
     }
     .finish-btn:hover { background: #fee2e2; }
 
+    /* Tombol SELESAI muncul dengan animasi setelah 40 menit */
+    .finish-btn.finish-ready {
+      animation: finishReveal 0.65s ease-out both, finishPulse 2.2s ease-in-out 0.65s infinite;
+    }
+    @keyframes finishReveal {
+      from { opacity: 0; transform: translateY(-8px) scale(.92); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes finishPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.16); }
+      50%      { box-shadow: 0 0 0 5px rgba(220, 38, 38, 0.08); }
+    }
+
     .timer-warning {
       background: #ef4444;
       border-color: #dc2626;
@@ -382,26 +397,25 @@
   <!-- 1. Beranda Ujian / Start Screen -->
   <div id="startScreen" class="overlay">
     <div class="card">
-      
-      <!-- Ikon Informatika -->
-      <div class="motion-badge">
-		<svg class="motion-svg" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-			<line x1="8" y1="21" x2="16" y2="21"></line>
-			<line x1="12" y1="17" x2="12" y2="21"></line>
-			<polyline points="7 8 10 11 7 14"></polyline>
-			<line x1="13" y1="14" x2="17" y2="14"></line>
-		</svg>
-	</div>
+           
+<!-- Logo SMAN 4 Pasuruan -->
+<div class="motion-badge">
+    <img
+        src="https://sman4-pasuruan.sch.id/wp-content/uploads/2024/06/LOGO-SMAPA-1024x1024.png"
+        alt="Logo SMAN 4 Pasuruan"
+        class="motion-svg"
+        style="width: 58px; height: 58px; object-fit: contain;"
+    >
+</div>
 
       <span class="sub-badge">Evaluasi Pembelajaran</span>
-      <h1>PSAS INFORMATIKA</h1>
-      <p class="subtitle">Materi Semester Ganjil</p>
+      <h1>Penilaian Sumatif Akhir Semester</h1>
+      <p class="subtitle">Tahun Pelajaran 2026-2027</p>
 
       <div class="info-grid">
         <div class="info-box">
           <span class="label">MATA PELAJARAN</span>
-		  <span class="value">💻 Informatika</span>
+		  <span class="value">📚 Matematika</span>
         </div>
         <div class="info-box">
           <span class="label">DURASI WAKTU</span>
@@ -483,18 +497,18 @@
         <circle cx="5" cy="12" r="2"></circle>
       </svg>
       <div class="header-titles">
-        <span class="exam-title">PSAS Informatika</span>
+        <span class="exam-title">PSAS Ganjil 2026</span>
         <span class="violation-badge" id="violationText">Pelanggaran: 0/5</span>
       </div>
     </div>
     <!-- Timer dan tombol selesai -->
     <div class="timer-actions">
       <div class="timer-badge" id="timer">60:00</div>
-      <button type="button" class="finish-btn" id="finishExamBtn" onclick="finishExam()">SELESAI</button>
+      <button type="button" class="finish-btn hidden" id="finishExamBtn" onclick="finishExam()">SELESAI</button>
     </div>
   </header>
 
-  <!-- Area Google Form Resmi Fisika Materi Gerak -->
+  <!-- Area Google Form Resmi Informatika -->
   <div class="form-container" id="frameContainer">
     <!-- Iframe dimuat secara dinamis via JavaScript -->
   </div>
@@ -504,11 +518,12 @@
     const EXAM_ID = "INFORMATIKA2026";
     const API_URL = "https://gbrrfdtospczcqzfmddk.supabase.co/functions/v1/cbt-violation";
 	const SUPABASE_ANON_KEY ="sb_publishable_RUPj5lBW2meoJpS0G1Aryg_vzS-P59I";
-    const FORM_URL = "https://forms.gle/grw8VTzfizSTktN6A";
+    const FORM_URL = "https://forms.gle/Attv3gGTPGhqcnqe9";
 	  
 	
 
-    let examDurationMinutes = 60; 
+    let examDurationMinutes = 60;
+    const MIN_FINISH_MINUTES = 40;
     let maxViolations = 5;
     let timeRemaining = examDurationMinutes * 60;
     let violationCount = 0;
@@ -523,6 +538,7 @@
     const lockScreen = document.getElementById('lockScreen');
     const lockMessage = document.getElementById('lockMessage');
     const timerDisplay = document.getElementById('timer');
+    const finishExamBtn = document.getElementById('finishExamBtn');
     const violationText = document.getElementById('violationText');
     const warningText = document.getElementById('warningText');
     const frameContainer = document.getElementById('frameContainer');
@@ -726,6 +742,13 @@
 
     async function finishExam() {
       if (!isExamActive) return;
+
+      const elapsedSeconds = (examDurationMinutes * 60) - timeRemaining;
+      if (elapsedSeconds < MIN_FINISH_MINUTES * 60) {
+        alert("Tombol SELESAI baru dapat digunakan setelah 40 menit pengerjaan.");
+        return;
+      }
+
       const confirmed = confirm("Apakah Anda yakin ingin menyelesaikan ujian dan kembali ke menu awal?");
       if (!confirmed) return;
 
@@ -758,14 +781,35 @@
 
     function startTimer() {
       clearInterval(timerInterval);
+
       const tick = () => {
         timeRemaining = Math.max(0, Math.ceil((serverExpiresAt - Date.now()) / 1000));
         const minutes = Math.floor(timeRemaining / 60), seconds = timeRemaining % 60;
         timerDisplay.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
-        if (timeRemaining <= 300) timerDisplay.classList.add('timer-warning');
-        if (timeRemaining <= 0) { clearInterval(timerInterval); lockDevicePermanently("Waktu pengerjaan ujian telah berakhir!"); }
+
+        // Tombol SELESAI aktif setelah 40 menit waktu ujian berlalu.
+        const elapsedSeconds = (examDurationMinutes * 60) - timeRemaining;
+        const finishAllowed = elapsedSeconds >= MIN_FINISH_MINUTES * 60;
+
+        if (finishAllowed && finishExamBtn.classList.contains("hidden")) {
+          finishExamBtn.classList.remove("hidden");
+          finishExamBtn.classList.add("finish-ready");
+        } else if (!finishAllowed) {
+          finishExamBtn.classList.add("hidden");
+          finishExamBtn.classList.remove("finish-ready");
+        }
+
+        if (timeRemaining <= 300) timerDisplay.classList.add("timer-warning");
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          finishExamBtn.classList.add("hidden");
+          finishExamBtn.classList.remove("finish-ready");
+          lockDevicePermanently("Waktu pengerjaan ujian telah berakhir!");
+        }
       };
-      tick(); timerInterval = setInterval(tick, 1000);
+
+      tick();
+      timerInterval = setInterval(tick, 1000);
     }
 
     async function recordViolation(reason) {
@@ -856,4 +900,3 @@
   </script>
 </body>
 </html>
-
